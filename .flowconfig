@@ -1,0 +1,16 @@
+[ignore]
+.*/\.git/.*
+.*/doc/.*
+.*/coverage/.*
+.*/logs/.*
+;.*/test/api/.*
+;.*/test/unit/.*
+
+[include]
+
+[libs]
+flow-libs
+
+[options]
+suppress_comment=\\(.\\|\n\\)*\\@FlowBypass
+suppress_type=@FlowBypass

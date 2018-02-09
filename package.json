@@ -1,0 +1,24 @@
+{
+  "name": "aws-essentials",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "flow": "flow",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "typecheck": "flow"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/unscriptable/aws-essentials.git"
+  },
+  "author": "John Hann",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/unscriptable/aws-essentials/issues"
+  },
+  "homepage": "https://github.com/unscriptable/aws-essentials#readme",
+  "devDependencies": {
+    "flow-bin": "^0.65.0"
+  }
+}
