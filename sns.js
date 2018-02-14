@@ -19,7 +19,7 @@ export const publish
 
 // Create a function that will publish an SMS message.
 export const sendSms
-    : (snsClient:SnsClient, encode:mixed=>string, options?:Object)
+    : (snsClient:SnsClient, encode:string=>string, options?:Object)
     => (phone:string, message:string) => Promise<Object>
     = (snsClient, encode, options) => (phone, message) => {
           const Message = encode(message)
