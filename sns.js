@@ -21,7 +21,7 @@ export const publish
 export const sendSms
     : (snsClient:SnsClient, encode:Encode, options?:Object)
     => (phone:String, message:mixed) => Promise<Object>
-    = (snsClient, options) => (phone, message) => {
+    = (snsClient, encode, options) => (phone, message) => {
           const Message = encode(message)
           const MessageAttributes = smsAttributes(options)
           const op
@@ -34,12 +34,18 @@ export const sendSms
     }
 
 const smsAttributes
-    = options => {
-        SenderID: { DataType: 'String', StringValue: options.senderId },
-        SMSType: {
+    = ({ transactional, senderId }={}) => {
+      const SMSType
+        = {
             DataType: 'String',
-            StringValue: options.transactional ? 'Transactional' : 'Promotional'
+            StringValue: transactional ? 'Transactional' : 'Promotional'
         }
+      return senderId
+        ? ({
+            SenderID: { DataType: 'String', StringValue: String(senderId) },
+            SMSType
+        })
+        : ({ SMSType })
     }
 
 // Create a function that will receive a message from an Sns topic.
@@ -51,7 +57,8 @@ export const receive
         decode(Sns.Message)
 
 // Encodes a string as utf-8
-export const encodeUtf8 = s => Buffer.from(s).toString('utf8')
+export const encodeUtf8
+  = (s:string) => Buffer.from(s).toString('utf8')
 
 // TODO: subscribe
 
