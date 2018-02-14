@@ -13,9 +13,32 @@ export const publish
         const base = Object.assign({}, { TopicArn: topic }, options)
         return message => {
             const op = Object.assign({}, base, { Message: encode(message) })
-            return new Promise(
-                (res, rej) => snsClient.publish(op, snsCallback(res, rej))
+            return snsClient.publish(op).promise()
+        }
+    }
+
+// Create a function that will publish an SMS message.
+export const sendSms
+    : (snsClient:SnsClient, encode:Encode, options?:Object)
+    => (phone:String, message:mixed) => Promise<Object>
+    = (snsClient, options) => (phone, message) => {
+          const Message = encode(message)
+          const MessageAttributes = smsAttributes(options)
+          const op
+            = Object.assign(
+                {},
+                options,
+                { PhoneNumber: phone, Message, MessageAttributes }
             )
+          return snsClient.publish(op).promise()
+    }
+
+const smsAttributes
+    = options => {
+        SenderID: { DataType: 'String', StringValue: options.senderId },
+        SMSType: {
+            DataType: 'String',
+            StringValue: options.transactional ? 'Transactional' : 'Promotional'
         }
     }
 
@@ -26,6 +49,9 @@ export const receive
     : (decode:Decode) => (record:{ Sns:{ Message:string } }) => mixed
     = (decode) => ({ Sns }) =>
         decode(Sns.Message)
+
+// Encodes a string as utf-8
+export const encodeUtf8 = s => Buffer.from(s).toString('utf8')
 
 // TODO: subscribe
 
@@ -65,7 +91,7 @@ const snsCallback
 
 type SnsClient
     = {
-        publish: (op:Object, callback:SnsCallback) => mixed
+        publish: (op:Object) => PromiseStub<Object>
     }
 
-type SnsCallback = (err:?Error, result:Object) => mixed
+type PromiseStub<T> = { promise: () => Promise<T> }
