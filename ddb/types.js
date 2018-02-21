@@ -38,4 +38,13 @@ export type DynamoDbAttribute
     | {| BOOL: boolean |}
     | {| NULL: true |}
 
+export type DdbBuilder
+    = {
+        table: (name:string) => string,
+        item: (o:Object) => DynamoDbItem,
+        attr: (v:mixed) => DynamoDbAttribute,
+        fromItem: (i:DynamoDbItem) => Object,
+        fromAttr: (a:DynamoDbAttribute) => mixed
+    }
+
 type PromiseStub<T> = { promise: () => Promise<T> }
