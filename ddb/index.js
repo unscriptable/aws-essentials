@@ -3,5 +3,5 @@
 
 export { item, attr, fromItem, fromAttr } from './autoConvert'
 export type {
-    DynamoDbClient, DynamoDbOp, DynamoDbItem, DynamoDbAttribute
+    DynamoDbClient, DynamoDbOp, DynamoDbItem, DynamoDbAttribute, DdbBuilder
 } from './types'
