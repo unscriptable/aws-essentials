@@ -44,8 +44,7 @@ export type DdbBuilder
         item: (o:Object) => DynamoDbItem,
         attr: (v:mixed) => DynamoDbAttribute,
         fromItem: (i:DynamoDbItem) => Object,
-        fromAttr: (a:DynamoDbAttribute) => mixed,
-        id: () => string
+        fromAttr: (a:DynamoDbAttribute) => mixed
     }
 
 type PromiseStub<T> = { promise: () => Promise<T> }
