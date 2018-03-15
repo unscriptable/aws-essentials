@@ -2,7 +2,9 @@
 
 // Functions to build DynamoDB queries.
 
-import type { DynamoDbItem, DynamoDbAttribute } from './types'
+import type {
+    DynamoDbItem, DynamoDbAttribute, UpdateExpressionParams
+} from './types'
 
 // Convert a plain JavaScript object to a DynamoDbItem.
 export const item
@@ -45,6 +47,38 @@ export const fromAttr
         if (attr.M) return mapKeys(attr.M, fromAttr)
         if (attr.B) return attr.B
         throw new Error(`Unknown DynamoDB attribute: ${ JSON.stringify(attr) }`)
+    }
+
+// Generates the UpdateExpression, ExpressionAttributeValues, and
+// ExpressionAttributeNames params for a ddb updateItem operation.
+// Does not (yet) merge lists or maps, not recursive! TODO
+export const patch
+    : Object => UpdateExpressionParams
+    = obj => {
+        const { sets, removes, names, values } = Object.keys(obj).reduce(
+            ({ sets, removes, names, values }, key) => {
+                const name = `#${key}`
+                const value = `:${key}`
+                if (obj[key] == null) {
+                    removes.push(name)
+                    names[name] = key
+                }
+                else {
+                    sets.push(`${name} = ${value}`)
+                    names[name] = key
+                    values[value] = attr(obj[key])
+                }
+                return { sets, removes, names, values }
+            },
+            { sets: [], removes: [], names: {}, values: {} }
+        )
+        const setClause = sets.length ? `SET ${sets.join(',')}` : ''
+        const removeClause = removes.length ? `REMOVE ${removes.join(',')}` : ''
+        return {
+            UpdateExpression: `${setClause} ${removeClause}`,
+            ExpressionAttributeNames: names,
+            ExpressionAttributeValues: values
+        }
     }
 
 const toString = Object.prototype.toString

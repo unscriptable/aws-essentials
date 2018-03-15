@@ -21,7 +21,12 @@ export type DynamoDbOp
         FilterExpression?: string,
         IndexName?: string,
         Limit?: number,
-        ProjectionExpression?: string
+        ReturnValues?:
+            'NONE' | 'ALL_OLD' | 'UPDATED_OLD' | 'ALL_NEW' | 'UPDATED_NEW',
+        ProjectionExpression?: string,
+        UpdateExpression?: string,
+        ExpressionAttributeNames?: Object,
+        ExpressionAttributeValues?: DynamoDbItem
     }
 
 export type DynamoDbItem
@@ -44,7 +49,16 @@ export type DdbBuilder
         item: (o:Object) => DynamoDbItem,
         attr: (v:mixed) => DynamoDbAttribute,
         fromItem: (i:DynamoDbItem) => Object,
-        fromAttr: (a:DynamoDbAttribute) => mixed
+        fromAttr: (a:DynamoDbAttribute) => mixed,
+        patch: Object => UpdateExpressionParams,
+        id: () => string
+    }
+
+export type UpdateExpressionParams
+    = {
+        UpdateExpression: string,
+        ExpressionAttributeValues: DynamoDbItem,
+        ExpressionAttributeNames: Object
     }
 
 type PromiseStub<T> = { promise: () => Promise<T> }
