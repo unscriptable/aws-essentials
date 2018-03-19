@@ -40,8 +40,8 @@ export const fromAttr
     : (attr:DynamoDbAttribute) => mixed
     = attr => {
         if (attr.S) return attr.S
-        if (attr.N) return attr.N
-        if (attr.BOOL) return attr.BOOL
+        if (attr.N) return Number(attr.N)
+        if (attr.BOOL) return Boolean(attr.BOOL)
         if (attr.NULL) return null
         if (attr.L) return attr.L.map(fromAttr)
         if (attr.M) return mapKeys(attr.M, fromAttr)
