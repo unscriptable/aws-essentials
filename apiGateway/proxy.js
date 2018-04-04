@@ -12,7 +12,7 @@ export const successCallback
 // Create an API success response with a json body.
 // Provide a function to generate the correct status code from the json.
 export const successResponse
-    : (status?:(o?:Object)=>number) => (json?:Object) => ApiProxy
+    : (status?:(o?:mixed)=>number) => (json?:mixed) => ApiProxy
     = (status=always200) => json =>
         ({
             statusCode: status(json),
@@ -23,7 +23,7 @@ export const successResponse
 // Create an API failure response with a json body.
 // Provide a function to generate the correct status code from the json.
 export const failureResponse
-    : (status?:(o?:Object)=>number) => (err:Error) => ApiProxy
+    : (status?:(o?:mixed)=>number) => (err:Error) => ApiProxy
     = (status=always400) => err =>
         ({
             statusCode: status(err),

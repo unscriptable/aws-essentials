@@ -10,7 +10,8 @@ export type DynamoDbClient
         scan: (op:DynamoDbOp) => PromiseStub<Object>,
         deleteItem: (op:DynamoDbOp) => PromiseStub<Object>,
         query: (op:DynamoDbOp) => PromiseStub<Object>,
-        describeTable: (op:DynamoDbOp) => PromiseStub<Object>
+        describeTable: (op:DynamoDbOp) => PromiseStub<Object>,
+        batchWriteItem: (op:Object) => PromiseStub<Object>
     }
 
 export type DynamoDbOp
