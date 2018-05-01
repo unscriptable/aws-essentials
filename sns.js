@@ -13,10 +13,39 @@ export const publish
         const base = Object.assign({}, { TopicArn: topic }, options)
         return message => {
             const op = Object.assign({}, base, { Message: encode(message) })
-            return new Promise(
-                (res, rej) => snsClient.publish(op, snsCallback(res, rej))
-            )
+            return snsClient.publish(op).promise()
         }
+    }
+
+// Create a function that will publish an SMS message.
+export const sendSms
+    : (snsClient:SnsClient, encode:string=>string, options?:Object)
+    => (phone:string, message:string) => Promise<Object>
+    = (snsClient, encode, options) => (phone, message) => {
+          const Message = encode(message)
+          const MessageAttributes = smsAttributes(options)
+          const op
+            = Object.assign(
+                {},
+                options,
+                { PhoneNumber: phone, Message, MessageAttributes }
+            )
+          return snsClient.publish(op).promise()
+    }
+
+const smsAttributes
+    = ({ transactional, senderId }={}) => {
+      const SMSType
+        = {
+            DataType: 'String',
+            StringValue: transactional ? 'Transactional' : 'Promotional'
+        }
+      return senderId
+        ? ({
+            SenderID: { DataType: 'String', StringValue: String(senderId) },
+            SMSType
+        })
+        : ({ SMSType })
     }
 
 // Create a function that will receive a message from an Sns topic.
@@ -26,6 +55,10 @@ export const receive
     : (decode:Decode) => (record:{ Sns:{ Message:string } }) => mixed
     = (decode) => ({ Sns }) =>
         decode(Sns.Message)
+
+// Encodes a string as utf-8
+export const encodeUtf8
+  = (s:string) => Buffer.from(s).toString('utf8')
 
 // TODO: subscribe
 
@@ -65,7 +98,7 @@ const snsCallback
 
 type SnsClient
     = {
-        publish: (op:Object, callback:SnsCallback) => mixed
+        publish: (op:Object) => PromiseStub<Object>
     }
 
-type SnsCallback = (err:?Error, result:Object) => mixed
+type PromiseStub<T> = { promise: () => Promise<T> }

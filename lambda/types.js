@@ -37,6 +37,7 @@ type DdbStreamEvent
                 NewImage: Object, // TODO: actually DynamoDbAttribute
                 OldImage: Object // TODO: actually DynamoDbAttribute
             },
+            eventName: 'INSERT' | 'MODIFY' | 'REMOVE',
             eventSourceARN: string
         }>
     }
