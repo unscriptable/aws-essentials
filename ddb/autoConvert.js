@@ -10,7 +10,7 @@ import type {
 export const item
     : (obj:Object) => DynamoDbItem
     = obj =>
-        mapKeys(obj, attr)
+        mapValues(obj, attr)
 
 // Convert a JavaScript value into a DynamoDbAttribute.
 // TODO: Maps and Sets require special attention.
@@ -23,15 +23,37 @@ export const attr
         if (value == null) return { NULL: true }
         if (Array.isArray(value)) return { L: value.map(attr) }
         if (toString.call(value) === '[object Object]')
-          return { M: mapKeys(((value:any):Object), attr) }
+          return { M: mapValues(((value:any):Object), attr) }
         return { B: String(value) }
     }
+
+type AttrHints = { [name:string]: 'SS' | 'NS' }
+
+// Convert a plain JavaScript object to a DynamoDbItem.
+// Provide mapping of special DynamoDB types (hints). Any array properties not
+// mapped as hints will be conerted to DynamoDB lists (L type).  Mappings
+// should look like:
+//     `{ myStringSet: 'SS', myNumberSet: 'Ns' }`.
+const itemWithHints
+    : (hints:AttrHints) => (obj:Object) => DynamoDbItem
+    = hints => obj =>
+        mapKeyValuePairs(
+            obj,
+            (key, value) => {
+                if (!(key in hints))
+                    return attr(value)
+                else if (hints[key] == 'SS')
+                    return { SS: value[key] }
+                else if (hints[key] == 'NS')
+                    return { NS: value[key].map(String) }
+            }
+        )
 
 // Convert a DynamoDBItem back into a normal JavaScript object.
 export const fromItem
     : (item:DynamoDbItem) => Object
     = item =>
-        mapKeys(item, fromAttr)
+        mapValues(item, fromAttr)
 
 // Convert a DynamoDBAttribute back into a JavaScript value.
 // If the developer wants a true Map, they should transform the output of this
@@ -44,8 +66,10 @@ export const fromAttr
         if (attr.BOOL) return Boolean(attr.BOOL)
         if (attr.NULL) return null
         if (attr.L) return attr.L.map(fromAttr)
-        if (attr.M) return mapKeys(attr.M, fromAttr)
+        if (attr.M) return mapValues(attr.M, fromAttr)
         if (attr.B) return attr.B
+        if (attr.SS) return attr.SS
+        if (attr.NS) return attr.NS.map(Number)
         throw new Error(`Unknown DynamoDB attribute: ${ JSON.stringify(attr) }`)
     }
 
@@ -83,10 +107,17 @@ export const patch
 
 const toString = Object.prototype.toString
 
-const mapKeys
+const mapValues
     = (o1, f) =>
         Object.keys(o1).reduce(
             (o2, key) => addProp(o2, key, f(o1[key])),
+            {}
+        )
+
+const mapKeyValuePairs
+    = (o1, f) =>
+        Object.keys(o1).reduce(
+            (o2, key) => addProp(o2, key, f(key, o1[key])),
             {}
         )
 

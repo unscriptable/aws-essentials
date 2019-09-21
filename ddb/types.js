@@ -40,6 +40,8 @@ export type DynamoDbAttribute
     | {| N: string |}
     | {| B: string |}
     | {| L: Array<DynamoDbAttribute> |}
+    | {| SS: Array<string> |}
+    | {| NS: Array<string> |}
     | {| M: { [name:string]: DynamoDbAttribute } |}
     | {| BOOL: boolean |}
     | {| NULL: true |}
