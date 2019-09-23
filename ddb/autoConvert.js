@@ -34,7 +34,7 @@ type AttrHints = { [name:string]: 'SS' | 'NS' }
 // mapped as hints will be conerted to DynamoDB lists (L type).  Mappings
 // should look like:
 //     `{ myStringSet: 'SS', myNumberSet: 'Ns' }`.
-const itemWithHints
+export const itemWithHints
     : (hints:AttrHints) => (obj:Object) => DynamoDbItem
     = hints => obj =>
         mapKeyValuePairs(
