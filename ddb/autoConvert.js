@@ -61,15 +61,15 @@ export const fromItem
 export const fromAttr
     : (attr:DynamoDbAttribute) => mixed
     = attr => {
-        if (attr.S) return attr.S
-        if (attr.N) return Number(attr.N)
-        if (attr.BOOL) return Boolean(attr.BOOL)
-        if (attr.NULL) return null
-        if (attr.L) return attr.L.map(fromAttr)
-        if (attr.M) return mapValues(attr.M, fromAttr)
-        if (attr.B) return attr.B
-        if (attr.SS) return attr.SS
-        if (attr.NS) return attr.NS.map(Number)
+        if ('S' in attr) return attr.S
+        if ('N' in attr) return Number(attr.N)
+        if ('BOOL' in attr) return Boolean(attr.BOOL)
+        if ('NULL' in attr) return null
+        if ('L' in attr) return attr.L.map(fromAttr)
+        if ('M' in attr) return mapValues(attr.M, fromAttr)
+        if ('B' in attr) return attr.B
+        if ('SS' in attr) return attr.SS
+        if ('NS' in attr) return attr.NS.map(Number)
         throw new Error(`Unknown DynamoDB attribute: ${ JSON.stringify(attr) }`)
     }
 
