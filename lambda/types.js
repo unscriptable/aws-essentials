@@ -4,16 +4,19 @@
 
 // The standard siganture for AWS Lambda functions.
 export type ApiHandler
-    = (event:ApiProxiedEvent, context:{}, callback:NodeCallback) => mixed
+    = (event:ApiProxiedEvent, context:{}, callback:NodeCallback) => Promise<mixed>
 
 export type DdbStreamHandler
-    = (event:DdbStreamEvent, context:{}, callback:NodeCallback) => mixed
+    = (event:DdbStreamEvent, context:{}, callback:NodeCallback) => Promise<mixed>
 
 export type SnsMessageHandler
-    = (event:SnsMessageEvent, context:{}, callback:NodeCallback) => mixed
+    = (event:SnsMessageEvent, context:{}, callback:NodeCallback) => Promise<mixed>
+
+export type SqsMessageHandler
+    = (event:SqsMessageEvent, context:{}, NodeCallback) => Promise<mixed>
 
 export type CognitoPreSignupHandler
-    = (event:CognitoPreSignupEvent, context:{}, callback:NodeCallback) => mixed
+    = (event:CognitoPreSignupEvent, context:{}, callback:NodeCallback) => Promise<mixed>
 
 // The proxied event sent from AWS when Lambda integration is enabled.
 export type ApiProxiedEvent = {
@@ -44,7 +47,22 @@ type DdbStreamEvent
 
 type SnsMessageEvent
     = {
-        Records: Array<{ Sns: { Message: string } }>
+        Records: Array<{
+            Sns: {
+                TopicArn: string,
+                Message: string,
+                Timestamp: string
+            }
+        }>
+    }
+
+type SqsMessageEvent
+    = {
+      Records: Array<{
+          body: string,
+          eventSourceARN: string,
+          attributes: { SentTimestamp: number }
+      }>
     }
 
 type CognitoPreSignupEvent
