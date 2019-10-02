@@ -19,6 +19,6 @@
   },
   "homepage": "https://github.com/unscriptable/aws-essentials#readme",
   "devDependencies": {
-    "flow-bin": "^0.65.0"
+    "flow-bin": "^0.107.0"
   }
 }

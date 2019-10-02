@@ -17,19 +17,22 @@ export const successResponse
         ({
             statusCode: status(json),
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(json)
+            body: stringify(json)
         })
 
 // Create an API failure response with a json body.
 // Provide a function to generate the correct status code from the json.
 export const failureResponse
     : (status?:(o?:mixed)=>number) => (err:Error) => ApiProxy
-    = (status=always400) => err =>
-        ({
+    = (status=always400) => err => {
+        const message = err.message
+        const code = 'code' in err ? String((err:any).code) : ''
+        return {
             statusCode: status(err),
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: err.message, code: err.code || '' })
-        })
+            body: stringify({ message: message, code: code })
+        }
+    }
 
 // Generate a status code from a set of pre-defined Error classes.
 // Alternatively, pass your own Error object that has a `statusCode` number
@@ -53,6 +56,9 @@ const always200
 
 const always400
     = _ => 400
+
+const stringify
+  = it => JSON.stringify(it) || ''
 
 type ApiProxy
     = {
