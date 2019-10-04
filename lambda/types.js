@@ -35,12 +35,7 @@ export type ApiProxiedEvent = {
 export type DdbStreamEvent
     = {
         Records: Array<{
-            dynamodb: {
-                ApproximateCreationDateTime: string,
-                Keys: Object, // TODO: actually DdbItem
-                NewImage: Object, // TODO: actually DynamoDbAttribute
-                OldImage: Object // TODO: actually DynamoDbAttribute
-            },
+            dynamodb: DdbStreamEventInfo,
             eventName: 'INSERT' | 'MODIFY' | 'REMOVE',
             eventSourceARN: string
         }>
