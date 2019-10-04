@@ -1,6 +1,7 @@
 // @flow
-
 // Types useful for AWS Lambda
+
+import type { DynamoDbItem } from '../ddb'
 
 // The standard siganture for AWS Lambda functions.
 export type ApiHandler
@@ -31,7 +32,7 @@ export type ApiProxiedEvent = {
     path: string
 }
 
-type DdbStreamEvent
+export type DdbStreamEvent
     = {
         Records: Array<{
             dynamodb: {
@@ -45,7 +46,15 @@ type DdbStreamEvent
         }>
     }
 
-type SnsMessageEvent
+export type DdbStreamEventInfo
+  = {
+    ApproximateCreationDateTime: number,
+    Keys: DynamoDbItem,
+    NewImage: DynamoDbItem,
+    OldImage: DynamoDbItem
+  }
+
+export type SnsMessageEvent
     = {
         Records: Array<{
             Sns: {
@@ -56,7 +65,7 @@ type SnsMessageEvent
         }>
     }
 
-type SqsMessageEvent
+export type SqsMessageEvent
     = {
       Records: Array<{
           body: string,
@@ -65,7 +74,7 @@ type SqsMessageEvent
       }>
     }
 
-type CognitoPreSignupEvent
+export type CognitoPreSignupEvent
     = {
         userName: string,
         request: {
