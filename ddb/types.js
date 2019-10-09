@@ -60,7 +60,7 @@ export type DdbBuilder
 export type UpdateExpressionParams
     = {
         UpdateExpression: string,
-        ExpressionAttributeValues: DynamoDbItem,
+        ExpressionAttributeValues?: DynamoDbItem,
         ExpressionAttributeNames: Object
     }
 

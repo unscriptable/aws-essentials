@@ -98,11 +98,19 @@ export const patch
         )
         const setClause = sets.length ? `SET ${sets.join(',')}` : ''
         const removeClause = removes.length ? `REMOVE ${removes.join(',')}` : ''
-        return {
-            UpdateExpression: `${setClause} ${removeClause}`,
-            ExpressionAttributeNames: names,
-            ExpressionAttributeValues: values
-        }
+
+        // If there are no set operations, don't return ExpressionAttributeValues
+        // or AWS will throw.
+        return sets.length
+            ? {
+                UpdateExpression: `${setClause} ${removeClause}`,
+                ExpressionAttributeNames: names,
+                ExpressionAttributeValues: values
+            }
+            : {
+                UpdateExpression: `${setClause} ${removeClause}`,
+                ExpressionAttributeNames: names
+            }
     }
 
 const toString = Object.prototype.toString
