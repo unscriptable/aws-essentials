@@ -43,9 +43,9 @@ export const itemWithHints
                 if (!(key in hints))
                     return attr(value)
                 else if (hints[key] == 'SS')
-                    return { SS: value[key] }
+                    return { SS: value }
                 else if (hints[key] == 'NS')
-                    return { NS: value[key].map(String) }
+                    return { NS: value.map(String) }
             }
         )
 
