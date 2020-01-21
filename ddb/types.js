@@ -11,7 +11,8 @@ export type DynamoDbClient
         deleteItem: (op:DynamoDbOp) => PromiseStub<Object>,
         query: (op:DynamoDbOp) => PromiseStub<Object>,
         describeTable: (op:DynamoDbOp) => PromiseStub<Object>,
-        batchWriteItem: (op:Object) => PromiseStub<Object>
+        batchWriteItem: (op:Object) => PromiseStub<Object>,
+        createBackup: (op:Object) => PromiseStub<Object>
     }
 
 export type DynamoDbOp
