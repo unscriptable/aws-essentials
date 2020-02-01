@@ -12,7 +12,7 @@ export type DynamoDbClient
         query: (op:DynamoDbOp) => PromiseStub<Object>,
         describeTable: (op:DynamoDbOp) => PromiseStub<Object>,
         batchWriteItem: (op:Object) => PromiseStub<Object>,
-        createBackup: (op:Object) => PromiseStub<Object>
+        createBackup: (op:{ TableName: string, BackupName: string }) => PromiseStub<Object>
     }
 
 export type DynamoDbOp
