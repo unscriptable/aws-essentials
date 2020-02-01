@@ -19,6 +19,9 @@ export type SqsMessageHandler
 export type CognitoPreSignupHandler
     = (event:CognitoPreSignupEvent, context:{}, callback:NodeCallback) => Promise<mixed>
 
+export type ScheduleHandler
+    = (event:ScheduleEvent, context:{}, callback:NodeCallback) => Promise<mixed>
+
 // The proxied event sent from AWS when Lambda integration is enabled.
 export type ApiProxiedEvent = {
     body: string,
@@ -92,6 +95,16 @@ export type CognitoPreSignupEvent
         callerContext: {
             clientId: string
         }
+    }
+
+type ScheduleEvent
+    = {
+        version: string,
+        source: string,
+        time: string,
+        account: string,
+        id: string,
+        resources: Array<string>
     }
 
 // The standard node callback signature.
