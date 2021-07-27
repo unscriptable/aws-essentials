@@ -10,6 +10,9 @@ export type ApiHandler
 export type DdbStreamHandler
     = (event:DdbStreamEvent, context:{}, callback:NodeCallback) => Promise<mixed>
 
+export type KinesisStreamHandler
+    = (event:KinesisStreamEvent, context:{}, callback:NodeCallback) => Promise<mixed>
+
 export type SnsMessageHandler
     = (event:SnsMessageEvent, context:{}, callback:NodeCallback) => Promise<mixed>
 
@@ -50,6 +53,32 @@ export type DdbStreamEventInfo
     Keys: DynamoDbItem,
     NewImage: DynamoDbItem,
     OldImage: DynamoDbItem
+  }
+
+export type KinesisStreamEvent
+  = {
+    Records: Array<KinesisStreamRecord>
+  }
+
+export type KinesisStreamRecord
+  = {
+    kinesis: KinesisStreamEventInfo,
+    eventSource: string,
+    eventVersion: string,
+    eventID: string,
+    eventName: string,
+    invokeIdentityArn: string,
+    awsRegion: string,
+    eventSourceARN: string
+  }
+
+export type KinesisStreamEventInfo
+  = {
+    kinesisSchemaVersion: string,
+    partitionKey: string,
+    sequenceNumber: string,
+    data: string,
+    approximateArrivalTimestamp: number
   }
 
 export type SnsMessageEvent
