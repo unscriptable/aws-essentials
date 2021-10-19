@@ -40,11 +40,14 @@ export type ApiProxiedEvent = {
 
 export type DdbStreamEvent
     = {
-        Records: Array<{
-            dynamodb: DdbStreamEventInfo,
-            eventName: 'INSERT' | 'MODIFY' | 'REMOVE',
-            eventSourceARN: string
-        }>
+        Records: Array<DdbStreamEventRecord>
+    }
+
+export type DdbStreamEventRecord
+    = {
+        dynamodb: DdbStreamEventInfo,
+        eventName: 'INSERT' | 'MODIFY' | 'REMOVE',
+        eventSourceARN: string
     }
 
 export type DdbStreamEventInfo
