@@ -52,10 +52,17 @@ export type DdbStreamEventInfo
     ApproximateCreationDateTime: number,
     Keys: DynamoDbItem,
     NewImage: DynamoDbItem,
-  } | {
+  } 
+  | {
     ApproximateCreationDateTime: number,
     Keys: DynamoDbItem,
     OldImage: DynamoDbItem,
+  } 
+  | {
+    ApproximateCreationDateTime: number,
+    Keys: DynamoDbItem,
+    NewImage: DynamoDbItem,
+    OldImage: DynamoDbItem
   }
 
 export type KinesisStreamEvent
