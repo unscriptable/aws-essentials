@@ -38,10 +38,20 @@ export type ApiProxiedEvent = {
     path: string
 }
 
+// Deprecated type that do not indicate that NewImage and OldImage might be
+// missing.  See new types below
 export type DdbStreamEvent
     = {
         Records: Array<DdbStreamEventRecord>
     }
+
+export type DdbStreamEventInfo
+  = {
+    ApproximateCreationDateTime: number,
+    Keys: DynamoDbItem,
+    NewImage: DynamoDbItem,
+    OldImage: DynamoDbItem
+  }
 
 export type DdbStreamEventRecord
     = {
@@ -50,23 +60,51 @@ export type DdbStreamEventRecord
         eventSourceARN: string
     }
 
-export type DdbStreamEventInfo
-  = {|
+// New types that distinguish the three variations of DDB event records.
+
+export type DdbStreamEvent2
+    = {
+        Records: Array<DdbStreamEventRecord2>
+    }
+
+export type DdbStreamEventRecord2
+    = {|
+        dynamodb: DdbStreamInsertEventInfo,
+        eventName: 'INSERT',
+        eventSourceARN: string
+    |}
+    | {|
+        dynamodb: DdbStreamModifyEventInfo,
+        eventName: 'MODIFY',
+        eventSourceARN: string
+    |}
+    | {|
+        dynamodb: DdbStreamRemoveEventInfo,
+        eventName: 'REMOVE',
+        eventSourceARN: string
+    |}
+
+export type DdbStreamInsertEventInfo
+  = {
     ApproximateCreationDateTime: number,
     Keys: DynamoDbItem,
     NewImage: DynamoDbItem
-  |} 
-  | {|
-    ApproximateCreationDateTime: number,
-    Keys: DynamoDbItem,
-    OldImage: DynamoDbItem
-  |} 
-  | {|
+  }
+
+export type DdbStreamModifyEventInfo
+  = {
     ApproximateCreationDateTime: number,
     Keys: DynamoDbItem,
     NewImage: DynamoDbItem,
     OldImage: DynamoDbItem
-  |}
+  }
+
+export type DdbStreamRemoveEventInfo
+  = {
+    ApproximateCreationDateTime: number,
+    Keys: DynamoDbItem,
+    OldImage: DynamoDbItem
+  }
 
 export type KinesisStreamEvent
   = {
