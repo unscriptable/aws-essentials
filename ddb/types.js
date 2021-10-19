@@ -4,12 +4,12 @@
 
 export type DynamoDbClient
     = {
-        putItem: (op:DynamoDbOp) => PromiseStub<Object>,
-        updateItem: (op:DynamoDbOp) => PromiseStub<Object>,
-        getItem: (op:DynamoDbOp) => PromiseStub<Object>,
-        scan: (op:DynamoDbOp) => PromiseStub<Object>,
-        deleteItem: (op:DynamoDbOp) => PromiseStub<Object>,
-        query: (op:DynamoDbOp) => PromiseStub<Object>,
+        putItem: (op:DynamoDbOp) => PromiseStub<{ Attributes: Attributes, ... }>,
+        updateItem: (op:DynamoDbOp) => PromiseStub<{ Attributes: Attributes, ... }>,
+        getItem: (op:DynamoDbOp) => PromiseStub<{ Item: Attributes, ... }>,
+        scan: (op:DynamoDbOp) => PromiseStub<{ Items: Array<Attributes>, ... }>,
+        deleteItem: (op:DynamoDbOp) => PromiseStub<{ Attributes: Attributes, ... }>,
+        query: (op:DynamoDbOp) => PromiseStub<{ Items: Array<Attributes>, ... }>,
         describeTable: (op:DynamoDbOp) => PromiseStub<Object>,
         batchWriteItem: (op:Object) => PromiseStub<Object>,
         transactWriteItems: (op:{ TransactItems: Array<Object> }) => PromiseStub<Object>,
@@ -18,52 +18,56 @@ export type DynamoDbClient
 
 export type DynamoDbOp
     = {
-        TableName: string,
-        Item?: DynamoDbItem,
-        ConditionExpression?: string,
-        FilterExpression?: string,
-        IndexName?: string,
-        Limit?: number,
-        ReturnValues?:
-            'NONE' | 'ALL_OLD' | 'UPDATED_OLD' | 'ALL_NEW' | 'UPDATED_NEW',
-        ProjectionExpression?: string,
-        UpdateExpression?: string,
-        ExpressionAttributeNames?: Object,
-        ExpressionAttributeValues?: DynamoDbItem
+        TableName: string, ...
+    //     Item?: Attributes,
+    //     ConditionExpression?: string,
+    //     FilterExpression?: string,
+    //     IndexName?: string,
+    //     Limit?: number,
+    //     ReturnValues?:
+    //         'NONE' | 'ALL_OLD' | 'UPDATED_OLD' | 'ALL_NEW' | 'UPDATED_NEW',
+    //     ProjectionExpression?: string,
+    //     UpdateExpression?: string,
+    //     ExpressionAttributeNames?: Object,
+    //     ExpressionAttributeValues?: Attributes
     }
 
-export type DynamoDbItem
-    = {
-        [name:string]: DynamoDbAttribute
-    }
+export type Key = { [key:string]: AttributeValue }
 
-export type DynamoDbAttribute
-    = {| S: string |}
-    | {| N: string |}
-    | {| B: string |}
-    | {| L: Array<DynamoDbAttribute> |}
-    | {| SS: Array<string> |}
-    | {| NS: Array<string> |}
-    | {| M: { [name:string]: DynamoDbAttribute } |}
-    | {| BOOL: boolean |}
-    | {| NULL: true |}
+export type Attributes = { [key:string]: AttributeValue }
 
-export type DdbBuilder
-    = {
-        table: (name:string) => string,
-        item: (o:Object) => DynamoDbItem,
-        attr: (v:mixed) => DynamoDbAttribute,
-        fromItem: (i:DynamoDbItem) => Object,
-        fromAttr: (a:DynamoDbAttribute) => mixed,
-        patch: Object => UpdateExpressionParams,
-        id: () => string
-    }
+export type AttributeValue
+  = { B: Base64EncodedBinary }
+  | { BS: Array<Base64EncodedBinary> }
+  | { BOOL: boolean }
+  | { L: Array<AttributeValue> }
+  | { M: { [key:string]: AttributeValue } }
+  | { N: StringifiedNumber }
+  | { NS: Array<StringifiedNumber> }
+  | { NULL: boolean }
+  | { S: string }
+  | { SS: Array<string> }
+
+export type TableName = string
+export type Base64EncodedBinary = string
+export type StringifiedNumber = string
+
+// export type DdbBuilder
+//     = {
+//         table: (name:string) => string,
+//         item: (o:Object) => DynamoDbItem,
+//         attr: (v:mixed) => AttributeValue,
+//         fromItem: (i:DynamoDbItem) => Object,
+//         fromAttr: (a:AttributeValue) => mixed,
+//         patch: Object => UpdateExpressionParams,
+//         id: () => string
+//     }
 
 export type UpdateExpressionParams
     = {
         UpdateExpression: string,
-        ExpressionAttributeValues?: DynamoDbItem,
-        ExpressionAttributeNames: Object
+        ExpressionAttributeValues?: Attributes,
+        ExpressionAttributeNames: { [key:string]: string }
     }
 
 type PromiseStub<T> = { promise: () => Promise<T> }

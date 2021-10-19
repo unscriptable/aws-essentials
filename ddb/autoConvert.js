@@ -3,19 +3,19 @@
 // Functions to build DynamoDB queries.
 
 import type {
-    DynamoDbItem, DynamoDbAttribute, UpdateExpressionParams
+    Attributes, AttributeValue, UpdateExpressionParams
 } from './types'
 
-// Convert a plain JavaScript object to a DynamoDbItem.
+// Convert a plain JavaScript object to a Attributes.
 export const item
-    : (obj:Object) => DynamoDbItem
+    : (obj:{...}) => Attributes
     = obj =>
         mapValues(obj, attr)
 
-// Convert a JavaScript value into a DynamoDbAttribute.
+// Convert a JavaScript value into a AttributeValue.
 // TODO: Maps and Sets require special attention.
 export const attr
-    : (value:mixed) => DynamoDbAttribute
+    : (value:mixed) => AttributeValue
     = value => {
         if (typeof value === 'string') return { S: value }
         if (typeof value === 'number') return { N: String(value) }
@@ -23,19 +23,19 @@ export const attr
         if (value == null) return { NULL: true }
         if (Array.isArray(value)) return { L: value.map(attr) }
         if (toString.call(value) === '[object Object]')
-          return { M: mapValues(((value:any):Object), attr) }
+          return { M: mapValues(((value:any):{...}), attr) }
         return { B: String(value) }
     }
 
 type AttrHints = { [name:string]: 'SS' | 'NS' }
 
-// Convert a plain JavaScript object to a DynamoDbItem.
+// Convert a plain JavaScript object to a Attributes.
 // Provide mapping of special DynamoDB types (hints). Any array properties not
 // mapped as hints will be conerted to DynamoDB lists (L type).  Mappings
 // should look like:
-//     `{ myStringSet: 'SS', myNumberSet: 'Ns' }`.
+//     `{ myStringSet: 'SS', myNumberSet: 'NS' }`.
 export const itemWithHints
-    : (hints:AttrHints) => (obj:Object) => DynamoDbItem
+    : (hints:AttrHints) => (obj:{...}) => Attributes
     = hints => obj =>
         mapKeyValuePairs(
             obj,
@@ -51,7 +51,7 @@ export const itemWithHints
 
 // Convert a DynamoDBItem back into a normal JavaScript object.
 export const fromItem
-    : (item:DynamoDbItem) => Object
+    : (item:Attributes) => {...}
     = item =>
         mapValues(item, fromAttr)
 
@@ -59,17 +59,17 @@ export const fromItem
 // If the developer wants a true Map, they should transform the output of this
 // function.
 export const fromAttr
-    : (attr:DynamoDbAttribute) => mixed
+    : (attr:AttributeValue) => mixed
     = attr => {
         if (typeof attr.S !== 'undefined') return attr.S
         if (typeof attr.N !== 'undefined') return Number(attr.N)
         if (typeof attr.BOOL !== 'undefined') return Boolean(attr.BOOL)
         if (typeof attr.NULL !== 'undefined') return null
-        if (typeof attr.L !== 'undefined') return attr.L.map(fromAttr)
-        if (typeof attr.M !== 'undefined') return mapValues(attr.M, fromAttr)
+        if (typeof attr.L === 'undefined') return (attr:any).L.map(fromAttr)
+        if (typeof attr.M !== 'undefined') return mapValues((attr:any).M, fromAttr)
         if (typeof attr.B !== 'undefined') return attr.B
         if (typeof attr.SS !== 'undefined') return attr.SS
-        if (typeof attr.NS !== 'undefined') return attr.NS.map(Number)
+        if (typeof attr.NS !== 'undefined') return (attr:any).NS.map(Number)
         throw new Error(`Unknown DynamoDB attribute: ${ JSON.stringify(attr) }`)
     }
 

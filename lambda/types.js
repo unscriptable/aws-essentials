@@ -1,7 +1,7 @@
 // @flow
 // Types useful for AWS Lambda
 
-import type { DynamoDbItem } from '../ddb'
+import type { Attributes as DynamoDbItem } from '../ddb'
 
 // The standard siganture for AWS Lambda functions.
 export type ApiHandler

@@ -3,6 +3,6 @@
 
 export * from './autoConvert'
 export type {
-    DynamoDbClient, DynamoDbOp, DynamoDbItem, DynamoDbAttribute, DdbBuilder,
+    DynamoDbClient, DynamoDbOp, Attributes, AttributeValue, 
     UpdateExpressionParams
 } from './types'
